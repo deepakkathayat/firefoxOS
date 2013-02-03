@@ -12,38 +12,6 @@
 	<link rel="stylesheet" href="css/app.css">
 	<link rel="stylesheet" href="css/install-button.css">
 	<link rel="stylesheet" href="css/layouts.css">
-	<script type="text/javascript">
-		function clickCounter(){
-			var Ob = $('.detail').get(0);
-			var t = Ob.view.model.get('title');
-	if(typeof(Storage)!=="undefined")
-	{
-		var flag = localStorage.getItem(" "+t+" ");
-		var flagr = localStorage.getItem("r"+t+" ");
-		var flagl = localStorage.getItem("l"+t+" ");
-
-		if (flagr && flagl)
-		{
-			localStorage[" "+t+" "]=Number(localStorage[" "+t+" "])+1;
-			localStorage["r"+t+" "]=Number(localStorage["r"+t+" "])-1;
-			localStorage["l"+t+" "]=Number(localStorage["l"+t+" "])+1;
-		}
-		else
-		{
-			localStorage["r"+t+" "]=85;
-			localStorage["l"+t+" "]=95;
-			localStorage[" "+t+" "]=1;
-		}
-		document.getElementById("result").innerHTML="r =  " + localStorage["r"+t+" "] + "l = " + localStorage["l"+t+" "] + " ";
-	}
-	else
-	{
-		document.getElementById("result").innerHTML="Sorry, your browser does not support web storage...";
-	}
-}
-		function draw(){
-		}
-	</script>
 	<style type="text/css">
 		canvas { border: 1px solid #9C9898; }
 	</style>
@@ -53,64 +21,26 @@
          through the marketpace (see app.js) -->
     <!-- <button id="install-btn">Install</button>     -->
 	<x-app>
-      <x-listview class="list" data-first="true">
+      <x-listview class="list" data-first="true" onclick="draw();" >
         <header>
           <button class="refresh">Refresh</button>
-          <h1>My Items</h1>
+          <h1>Your Tasks</h1>
           <button class="add">+</button>
         </header>
       </x-listview>
 
-      <x-view class="detail" >
+      <x-view class="detail" onclick = "draw()" >
         <header>
           <h1></h1>
           <button data-view="x-view.edit">Edit</button>
         </header>
 		<h1 class="title"></h1>
         <p class="desc"></p>
-        <p class="date"></p>
+		<p class="date"></p>
 	   <canvas id="object"></canvas>
         <button onclick="clickCounter()" type="submit">Fill</button>
-		<script>
-			
-			var canvas = document.getElementById('object');
-			if (canvas.getContext){
-				var context = canvas.getContext('2d');
-			}
-			var centerX = 0;
-			var centerY = 0;
-			var radius = 75;
-		//	var l = 95;
-		//	var r = 85;
-			var O = $('.detail').get(0);
-			var tit = O.view.model.get('title');
-			var r =  Number(localStorage["r"+tit+" "]);
-			var l = Number(localStorage["l"+tit+" "]);
-			// save state
-			context.save();
-
-			// translate context
-			context.translate(canvas.width / 2,canvas.height / 2);
-
-			// scale context horizontally
-			context.scale(2, 1);
-
-			// draw circle which will be stretched into an oval
-			context.beginPath();
-			context.arc(centerX, centerY,radius, r *(Math.PI/180), l *(Math.PI/180), false);
-
-			// restore to original state
-			context.restore();
-
-			// apply styling
-			context.fillStyle = '#8ED6FF';
-			context.fill();
-			context.lineWidth = 5;
-			context.strokeStyle ='black';
-			context.stroke();
-		</script>
-		
 		<div id="result"></div>
+	</div>
       </x-view>
 	
       <x-view class="edit">
@@ -127,8 +57,127 @@
          files, all handled by require.js:
          http://requirejs.org/docs/api.html#jsfiles -->
     <script type="text/javascript" src="js/x-tag.js"></script>
-    <script type="text/javascript"
-            data-main="js/init.js"
-            src="js/lib/require.js"></script>
+    <script type="text/javascript" data-main="js/init.js" src="js/lib/require.js"></script>
+	<script type="text/javascript">
+		var Ob,t;
+		function draw(){
+			Ob = $('.detail').get(0);
+			t = Ob.view.model.get('title');
+			var r =  parseInt(localStorage["r"+t+" "]);
+			var l = parseInt(localStorage["l"+t+" "]);
+			var canvas = document.getElementById('object');
+			if (canvas.getContext){
+				var context = canvas.getContext('2d');
+			}
+			canvas.width = canvas.width;
+			var centerX = 0;
+			var centerY = 0;
+			var radius = 65;
+			// save state
+			context.clearRect(0, 0, canvas.width,canvas.height);
+			context.save();
+			
+			// translate context
+			context.translate(canvas.width / 2,canvas.height / 2);
+
+			// scale context horizontally
+			context.scale(2, 1);
+			
+			context.beginPath();
+			context.arc(centerX, centerY,radius+2, 0 *(Math.PI/180), 360 *(Math.PI/180), false);
+
+			// restore to original state
+			context.restore();
+
+			// apply styling
+			//context.fillStyle = '#8ED6FF';
+		//	context.fill();
+			context.lineWidth = 5;
+			context.strokeStyle ='black';
+			context.stroke();
+
+			context.save();
+			context.translate(canvas.width / 2,canvas.height / 2);
+
+			// scale context horizontally
+			context.scale(2, 1);
+			
+			// draw circle which will be stretched into an oval
+			context.beginPath();
+			context.arc(centerX, centerY,radius, r *(Math.PI/180), l *(Math.PI/180), false);
+
+			// restore to original state
+			context.restore();
+
+			// apply styling
+			context.fillStyle = '#8ED6FF';
+			context.fill();
+			context.lineWidth = 0.1;
+			context.strokeStyle ='black';
+			context.stroke();
+		}
+		function clickCounter(){
+	if(typeof(Storage)!=="undefined")
+	{
+		var flagr = localStorage.getItem("r"+t+" ");
+		var flagl = localStorage.getItem("l"+t+" ");
+
+		if (flagr && flagl)
+		{
+			localStorage["r"+t+" "]=Number(localStorage["r"+t+" "])-3;
+			localStorage["l"+t+" "]=Number(localStorage["l"+t+" "])+3;
+		}
+		else
+		{
+			localStorage["r"+t+" "]=85;
+			localStorage["l"+t+" "]=95;
+		}
+		var r = localStorage["r"+t+" "];
+		var l = localStorage["l"+t+" "];
+
+		if(r==85 && l==95){
+		document.getElementById("result").innerHTML="Today might be the perfect day to break the ice and do something you've never done before, but always dreamed of. What's stopping you? Nothing.";
+		}
+		else if(r<85 && l>95 && r>75 && l<105){
+			document.getElementById("result").innerHTML="The beginning is always the hardest. Do not give up.";
+		}
+		else if(r<75 && l>105 && r>65 && l<115){
+			document.getElementById("result").innerHTML="No matter what you are going through, there's light at the end of the tunnel. And it may seem hard to get to it but you can do it. Just keep moving towards it.";
+	}
+		else if(r<65 && l>105 && r>55 && l<115){
+			document.getElementById("result").innerHTML="Keep going. You have promises to keep. Miles to go, before you sleep.";
+		}else if(r<55 && l>115 && r>45 && l<125){
+			document.getElementById("result").innerHTML="You are doing great! Keep going! Don't forget, this is your life. You must take control of it!";
+		}else if(r<45 && l>125 && r>35 && l<135){
+			document.getElementById("result").innerHTML="Things only get worse before they get better. Persistence is the key. Be strong. You'll sail through it.";
+		}else if(r<35 && l>135 && r>25 && l<145){
+			document.getElementById("result").innerHTML="It's better to look back on life and say:'I can't believe I did that' than 'I wish I had done that'. Buck up. It will be worth it.";
+		}else if(r<25 && l>145 && r>15 && l<155){
+			document.getElementById("result").innerHTML="Don't ever let someone tell you you can't do something. You got a dream, you got to protect it. When people can't do something themselves, they're going to tell you that you can't do it. You want something, go get it. Period.";
+		}else if(r<15 && l>155 && r>0 && l<165){
+			document.getElementById("result").innerHTML="You have come this far. Don't look back unless you are planning to go that way. Giving up is not an option.";
+		}else if(r<0 && l>165 && r>-15 && l<195){
+			document.getElementById("result").innerHTML="Wow! Look how far we have come! Remember, Good things come to those who believe, Better things come to those who wait. But the Best things come to those who never give up. ";
+		}else if(r<-15 && l>195 && r>-35 && l<215){
+			document.getElementById("result").innerHTML="This life is what you make of it. Don't let it go. Stay true to this. Keep trying.";
+		}else if(r<-35 && l>215 && r>-55 && l<235){
+			document.getElementById("result").innerHTML="You are not out there sweating for hours every day just to find out what it feels like to sweat. Your sweat is your achievement. Every drop counts. Make it count.";
+		}else if(r<-55 && l>235 && r>-75 && l<255){
+			document.getElementById("result").innerHTML="You are close. Don't lose focus. Don't worry. Everything is going to be AMAZING. Make it happen! ";
+		}else if(r<-75 && l>255 && r>-85 && l<265){
+			document.getElementById("result").innerHTML="Many of life's failures are people who did not realize how close they were to success when they gave up. Stay strong! Because you are worth it!";
+		}else if(r<-85 && l>265 && r>-88 && l<268){
+			document.getElementById("result").innerHTML="Take a deep breath and be brave. You are on a warrior's path to accomplishment.";
+		}else if(r<-88 && l>268 && r>-90 && l<270){
+			document.getElementById("result").innerHTML="The darkest night was way past you, agreed. But the sun shall rise tomorrow. Are you up for it?";
+		}else if(r>-90 && l>270){
+			document.getElementById("result").innerHTML="You came, you saw. You bloody hell CONQUERED! Sigh. What next? Never stop dreaming. Add another task. Go for the next kill.";
+		}
+	}
+		else{
+		document.getElementById("result").innerHTML="Sorry, your browser does not support web storage...";
+	}
+}
+	</script>
   </body>
 </html>

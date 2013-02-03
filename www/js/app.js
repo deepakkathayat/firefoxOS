@@ -34,7 +34,8 @@ define(function(require) {
                date: new Date(12, 10, 1) });
 
     $('button.refresh', list).click(function() {
-        // Do nothing right now
+        localStorage.clear();
+		// Do nothing right now
     });
 
     $('button.add', list).click(function() {
