@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Place favicon.ico in the root directory -->
+
+	<link rel="stylesheet" href="css/app.css">
+	<link rel="stylesheet" href="css/install-button.css">
+	<link rel="stylesheet" href="css/layouts.css">
+	<script type="text/javascript">
+		function clickCounter(){
+			var Ob = $('.detail').get(0);
+			var t = Ob.view.model.get('title');
+	if(typeof(Storage)!=="undefined")
+	{
+		var flag = localStorage.getItem(" "+t+" ");
+		var flagr = localStorage.getItem("r"+t+" ");
+		var flagl = localStorage.getItem("l"+t+" ");
+
+		if (flagr && flagl)
+		{
+			localStorage[" "+t+" "]=Number(localStorage[" "+t+" "])+1;
+			localStorage["r"+t+" "]=Number(localStorage["r"+t+" "])-1;
+			localStorage["l"+t+" "]=Number(localStorage["l"+t+" "])+1;
+		}
+		else
+		{
+			localStorage["r"+t+" "]=85;
+			localStorage["l"+t+" "]=95;
+			localStorage[" "+t+" "]=1;
+		}
+		document.getElementById("result").innerHTML="r =  " + localStorage["r"+t+" "] + "l = " + localStorage["l"+t+" "] + " ";
+	}
+	else
+	{
+		document.getElementById("result").innerHTML="Sorry, your browser does not support web storage...";
+	}
+}
+		function draw(){
+		}
+	</script>
+	<style type="text/css">
+		canvas { border: 1px solid #9C9898; }
+	</style>
+  </head>
+  <body>
+    <!-- Use this installation button to install locally without going
+         through the marketpace (see app.js) -->
+    <!-- <button id="install-btn">Install</button>     -->
+	<x-app>
+      <x-listview class="list" data-first="true">
+        <header>
+          <button class="refresh">Refresh</button>
+          <h1>My Items</h1>
+          <button class="add">+</button>
+        </header>
+      </x-listview>
+
+      <x-view class="detail" >
+        <header>
+          <h1></h1>
+          <button data-view="x-view.edit">Edit</button>
+        </header>
+		<h1 class="title"></h1>
+        <p class="desc"></p>
+        <p class="date"></p>
+	   <canvas id="object"></canvas>
+        <button onclick="clickCounter()" type="submit">Fill</button>
+		<script>
+			
+			var canvas = document.getElementById('object');
+			if (canvas.getContext){
+				var context = canvas.getContext('2d');
+			}
+			var centerX = 0;
+			var centerY = 0;
+			var radius = 75;
+		//	var l = 95;
+		//	var r = 85;
+			var O = $('.detail').get(0);
+			var tit = O.view.model.get('title');
+			var r =  Number(localStorage["r"+tit+" "]);
+			var l = Number(localStorage["l"+tit+" "]);
+			// save state
+			context.save();
+
+			// translate context
+			context.translate(canvas.width / 2,canvas.height / 2);
+
+			// scale context horizontally
+			context.scale(2, 1);
+
+			// draw circle which will be stretched into an oval
+			context.beginPath();
+			context.arc(centerX, centerY,radius, r *(Math.PI/180), l *(Math.PI/180), false);
+
+			// restore to original state
+			context.restore();
+
+			// apply styling
+			context.fillStyle = '#8ED6FF';
+			context.fill();
+			context.lineWidth = 5;
+			context.strokeStyle ='black';
+			context.stroke();
+		</script>
+		
+		<div id="result"></div>
+      </x-view>
+	
+      <x-view class="edit">
+        <h1>Edit</h1>
+        <div class="field">Task Name: <input type="text" name="title" /></div>
+        <div class="field">Description: <input type="text" name="desc" /></div>
+        <button type="submit" class="add">Add</button>
+      </x-view>
+	  
+    </x-app>
+
+    <!-- Using require.js, a module system for javascript, include the
+         js files. This loads "main.js", which in turn can load other
+         files, all handled by require.js:
+         http://requirejs.org/docs/api.html#jsfiles -->
+    <script type="text/javascript" src="js/x-tag.js"></script>
+    <script type="text/javascript"
+            data-main="js/init.js"
+            src="js/lib/require.js"></script>
+  </body>
+</html>
