@@ -14,6 +14,101 @@
 	<link rel="stylesheet" href="css/layouts.css">
 	<style type="text/css">
 		canvas { border: 0px solid #9C9898; }
+
+		fieldset.elist, input[type="text"], textarea, select, option,
+		fieldset.elist ul, fieldset.elist > legend, fieldset.elist
+		input[type="text"], fieldset.elist > legend:after {
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+		}
+
+		input[type="text"] {
+			padding: 0 20px;
+		}
+
+		textarea {
+			width: 500px;
+			height: 200px;
+			padding: 20px;
+		}
+
+		textarea, input[type="text"], fieldset.elist
+		ul, select, fieldset.elist > legend {
+			border: 2px #cccccc solid;
+			border-radius: 10px;
+		}
+
+		input[type="text"], fieldset.elist,
+		select, fieldset.elist > legend {
+			height: 32px;
+			font-family: Tahoma;
+			font-size: 14px;
+		}
+
+		input[type="text"]:hover,
+		textarea:hover,
+		select:hover,
+		fieldset.elist:hover >
+		legend {
+			background-color:
+			#ddddff;
+		}
+
+		select {
+			padding: 4px 20px;
+		}
+
+		option {
+			height: 30px;
+			padding: 5px
+			4px;
+		}
+
+		option:not(:checked),
+		textarea:focus {
+			background-color:
+			#ffcccc;
+		}
+
+		fieldset.elist
+		>
+		legend:after,
+		fieldset.elist
+		label {
+			height:
+			28px;
+		}
+
+		input[type="text"],
+		fieldset.elist
+		{
+			width:
+			316px;
+		}
+
+		input[type="text"]:focus,
+		textarea:focus,
+		select:focus,
+		fieldset.elist
+		>
+		legend
+		{
+			border:
+			2px
+			#ccaaaa
+			solid;
+		}
+
+		fieldset
+		{
+			border:
+			2px
+			#af3333
+			solid;
+			border-radius:
+			10px;
+		}
 	</style>
   </head>
   <body>
@@ -21,7 +116,7 @@
          through the marketpace (see app.js) -->
     <!-- <button id="install-btn">Install</button>     -->
 	<x-app>
-      <x-listview class="list" data-first="true" onclick="draw();" >
+      <x-listview class="list" data-first="true" >
         <header>
           <button class="refresh">Refresh</button>
           <h1>Tasks</h1>
@@ -30,7 +125,7 @@
         </header>
       </x-listview>
 
-      <x-view class="detail" onclick = "draw()" >
+      <x-view class="detail" >
         <header>
           <h1></h1>
           <button data-view="x-view.edit">Edit</button>
@@ -38,17 +133,44 @@
         <p class="desc"></p>
 		<p class="date"></p>
 	   <canvas id="object"></canvas>
-        <button onclick="clickCounter()" type="submit">Fill</button>
+        <button type="submit" class="add">Fill the Jar</button>
 		<div id="result" style="font-size:0.75em"></div>
 	</div>
       </x-view>
 	
       <x-view class="edit">
-        <h1>Edit</h1>
+	  <h1>Edit</h1>
+	  <fieldset>
+		  <legend>Add a Task</legend>
         <div class="field">Task Name: <input type="text" name="title" /></div>
         <div class="field">Description: <input type="text" name="desc" /></div>
-        <button type="submit" class="add">Add</button>
-      </x-view>
+		<div class="field">
+				<fieldset>
+				    <legend>Task to be done in Interval Time</legend>
+					<input type="text" name="inter" />
+					<select name="zxcvb">
+						<option value="s" />Seconds</option>
+						<option value="m"/>Minutes</option>
+						<option value="h" />Hours</option>
+						<option value="d" />Days</option>
+				   </select>
+				</fieldset>
+			</div>	
+		<div class="field">
+				<fieldset>
+				    <legend>Total time for Task Completion</legend>
+					<input type="text" name="total" />
+					<select name="qwerty">
+						<option value="s" />Seconds</option>
+					    <option value="m"/>Minutes</option>
+					    <option value="h" />Hours</option>
+					    <option value="d" />Days</option>
+					</select>
+				</fieldset>
+			</div>			
+				<button type="submit" class="add">Get, Set, Go!</button>
+			</fieldset>
+			</x-view>
 	  <x-view class="about">
 	  <h1>About</h1>
 	  <p> Jar of Life helps make your life productive. Add a task which you plan to execute, over some period of days. For each day that you do your task, say writing, or going to the gym, you get to fill the jar for that day. After a few days you'll start seeing the jar non-empty and filling. <br>Just keep at it and the jar will keep brimming every day. You'll like seeing that jar fill, especially when you get a few weeks under your belt. Your only job next is to not let the jar leak, which it will, if you skip a day.<br> The emphasis is on NOT LETTING IT LEAK.
@@ -69,126 +191,17 @@ You may have heard inch by inch anything's a cinch. Inch by inch does work if yo
          http://requirejs.org/docs/api.html#jsfiles -->
     <script type="text/javascript" src="js/x-tag.js"></script>
     <script type="text/javascript" data-main="js/init.js" src="js/lib/require.js"></script>
-	<script type="text/javascript">
-		var Ob,t;
-		function draw(){
-			Ob = $('.detail').get(0);
-			t = Ob.view.model.get('title');
-			var r =  parseInt(localStorage["r"+t+" "]);
-			var l = parseInt(localStorage["l"+t+" "]);
-			var canvas = document.getElementById('object');
-			if (canvas.getContext){
-				var context = canvas.getContext('2d');
-			}
-			canvas.width = canvas.width;
-			var centerX = 0;
-			var centerY = 0;
-			var radius = 65;
-			// save state
-			context.clearRect(0, 0, canvas.width,canvas.height);
-			context.save();
-			
-			// translate context
-			context.translate(canvas.width / 2,canvas.height / 2);
-
-			// scale context horizontally
-			context.scale(2, 1);
-			
-			context.beginPath();
-			context.arc(centerX, centerY,radius+2, 0 *(Math.PI/180), 360 *(Math.PI/180), false);
-
-			// restore to original state
-			context.restore();
-
-			// apply styling
-			//context.fillStyle = '#8ED6FF';
-		//	context.fill();
-			context.lineWidth = 5;
-			context.strokeStyle ='black';
-			context.stroke();
-
-			context.save();
-			context.translate(canvas.width / 2,canvas.height / 2);
-
-			// scale context horizontally
-			context.scale(2, 1);
-			
-			// draw circle which will be stretched into an oval
-			context.beginPath();
-			context.arc(centerX, centerY,radius, r *(Math.PI/180), l *(Math.PI/180), false);
-
-			// restore to original state
-			context.restore();
-
-			// apply styling
-			context.fillStyle = '#8ED6FF';
-			context.fill();
-			context.lineWidth = 0.1;
-			context.strokeStyle ='black';
-			context.stroke();
+	<script type="text/javascript" language="JavaScript">
+		function HidePart(d) { 
+			document.getElementById(d).style.display ="none";  }
+		function ShowPart(d) {
+			document.getElementById(d).style.display = "block"; }
+			function CheckboxChecked(){
+				var x=document.getElementById("mySelect").selectedIndex;
+			if(x==0) { ShowPart(0); }
+			else  { HidePart(0); }
 		}
-		function clickCounter(){
-	if(typeof(Storage)!=="undefined")
-	{
-		var flagr = localStorage.getItem("r"+t+" ");
-		var flagl = localStorage.getItem("l"+t+" ");
-
-		if (flagr && flagl)
-		{
-			localStorage["r"+t+" "]=Number(localStorage["r"+t+" "])-2;
-			localStorage["l"+t+" "]=Number(localStorage["l"+t+" "])+2;
-		}
-		else
-		{
-			localStorage["r"+t+" "]=85;
-			localStorage["l"+t+" "]=95;
-		}
-		var r = localStorage["r"+t+" "];
-		var l = localStorage["l"+t+" "];
-
-		if(r==85 && l==95){
-		document.getElementById("result").innerHTML="Today might be the perfect day to break the ice and do something you've never done before, but always dreamed of. What's stopping you? Nothing.";
-		}
-		else if(r<85 && l>95 && r>75 && l<105){
-			document.getElementById("result").innerHTML="The beginning is always the hardest. Do not give up.";
-		}
-		else if(r<75 && l>105 && r>65 && l<115){
-			document.getElementById("result").innerHTML="No matter what you are going through, there's light at the end of the tunnel. And it may seem hard to get to it but you can do it. Just keep moving towards it.";
-	}
-		else if(r<65 && l>115 && r>55 && l<125){
-			document.getElementById("result").innerHTML="Keep going. You have promises to keep. Miles to go, before you sleep.";
-		}else if(r<55 && l>125 && r>45 && l<135){
-			document.getElementById("result").innerHTML="You are doing great! Keep going! Don't forget, this is your life. You must take control of it!";
-		}else if(r<45 && l>135 && r>35 && l<145){
-			document.getElementById("result").innerHTML="Things only get worse before they get better. Persistence is the key. Be strong. You'll sail through it.";
-		}else if(r<35 && l>145 && r>25 && l<155){
-			document.getElementById("result").innerHTML="It's better to look back on life and say:'I can't believe I did that' than 'I wish I had done that'. Buck up. It will be worth it.";
-		}else if(r<25 && l>155 && r>15 && l<165){
-			document.getElementById("result").innerHTML="Don't ever let someone tell you you can't do something. You got a dream, you got to protect it. When people can't do something themselves, they're going to tell you that you can't do it. You want something, go get it. Period.";
-		}else if(r<15 && l>165 && r>0 && l<180){
-			document.getElementById("result").innerHTML="You have come this far. Don't look back unless you are planning to go that way. Giving up is not an option.";
-		}else if(r<0 && l>180 && r>-15 && l<195){
-			document.getElementById("result").innerHTML="Wow! Look how far we have come! Remember, Good things come to those who believe, Better things come to those who wait. But the Best things come to those who never give up. ";
-		}else if(r<-15 && l>195 && r>-30 && l<210){
-			document.getElementById("result").innerHTML="This life is what you make of it. Don't let it go. Stay true to this. Keep trying.";
-		}else if(r<-35 && l>215 && r>-50 && l<230){
-			document.getElementById("result").innerHTML="You are not out there sweating for hours every day just to find out what it feels like to sweat. Your sweat is your achievement. Every drop counts. Make it count.";
-		}else if(r<-55 && l>235 && r>-70 && l<250){
-			document.getElementById("result").innerHTML="You are close. Don't lose focus. Don't worry. Everything is going to be AMAZING. Make it happen! ";
-		}else if(r<-70 && l>250 && r>-80 && l<265){
-			document.getElementById("result").innerHTML="Many of life's failures are people who did not realize how close they were to success when they gave up. Stay strong! Because you are worth it!";
-		}else if(r<-80 && l>265 && r>-85 && l<268){
-			document.getElementById("result").innerHTML="Take a deep breath and be brave. You are on a warrior's path to accomplishment.";
-		}else if(r<-85 && l>268 && r>-90 && l<270){
-			document.getElementById("result").innerHTML="The darkest night was way past you, agreed. But the sun shall rise tomorrow. Are you up for it?";
-		}else if(r>-90 && l>270){
-			document.getElementById("result").innerHTML="You came, you saw. You bloody hell CONQUERED! Sigh. What next? Never stop dreaming. Add another task. Go for the next kill.";
-		}
-	}
-		else{
-		document.getElementById("result").innerHTML="Sorry, your browser does not support web storage...";
-	}
-}
 	</script>
-  </body>
+
+</body>
 </html>
